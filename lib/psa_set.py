@@ -9,12 +9,10 @@ from PIL import Image
 
 
 class PsaSet(PsaResource):
-
-
-    def __init__(self, href: str, *, has_gallery: bool=False):
+    def __init__(self, href: str, *, has_gallery: bool = False):
         super().__init__(href)
 
-#        self.set_name = href.split('/')[4]
+        #        self.set_name = href.split('/')[4]
         self.has_gallery = has_gallery
         self.cards = []
 
@@ -23,8 +21,8 @@ class PsaSet(PsaResource):
         if not self.html:
             self._load_content()
 
-        for row in self.html.find('tr'):
-            cols = row.find('td')
+        for row in self.html.find("tr"):
+            cols = row.find("td")
 
             if cols:
                 img_col = cols[1]
@@ -32,7 +30,7 @@ class PsaSet(PsaResource):
                 cardnumb_col = cols[3]
                 item_col = cols[4]
                 grade_col = cols[5]
-#                pop_col = cols[6]
+                #                pop_col = cols[6]
                 comments_col = cols[8]
 
                 imgs = self._img_src_from_col(img_col)
@@ -46,18 +44,18 @@ class PsaSet(PsaResource):
                         card_numb=cardnumb_col.text.strip(),
                         item=item_col.text.strip(),
                         grade=grade_col.text.strip(),
-#                        pop=int(pop_col.text.strip()),
+                        #                        pop=int(pop_col.text.strip()),
                         comments=comments_col.text.strip(),
                     )
                     self.cards.append(card)
 
     def _img_src_from_col(self, img_col) -> List[str]:
-
         def get_img(url):
             response = requests.get(url)
             bytes_im = io.BytesIO(response.content)
-            return (url, cv2.cvtColor(np.array(Image.open(bytes_im)),
-                    cv2.COLOR_RGB2BGR))
+            return (
+                url,
+                cv2.cvtColor(np.array(Image.open(bytes_im)), cv2.COLOR_RGB2BGR),
+            )
 
         return map(get_img, img_col.absolute_links)
-        

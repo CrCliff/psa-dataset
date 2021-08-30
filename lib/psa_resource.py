@@ -7,45 +7,41 @@ from typing import Optional
 
 class PsaResource:
 
-    BASE_URL = 'https://www.psacard.com'
+    BASE_URL = "https://www.psacard.com"
 
-
-    def __init__(self, href: str, base_url: Optional[str]=BASE_URL):
+    def __init__(self, href: str, base_url: Optional[str] = BASE_URL):
 
         if not isinstance(href, str):
-            raise TypeError('href must be of type str')
+            raise TypeError("href must be of type str")
 
         if not isinstance(base_url, str):
-            raise TypeError('base_url must be of type str')
+            raise TypeError("base_url must be of type str")
 
         self.href = href
         self.base_url = base_url
         self.html: Optional[BeautifulSoup] = None
 
-
     @staticmethod
     def is_set_endpoint(href: str) -> bool:
 
         if not isinstance(href, str):
-            raise TypeError('href must be of type str')
+            raise TypeError("href must be of type str")
 
-        pattern = '/psasetregistry/baseball/.*/alltimeset/\d+'
+        pattern = "/psasetregistry/baseball/.*/alltimeset/\d+"
         p = re.compile(pattern)
 
         return p.match(href)
-
 
     @staticmethod
     def is_setlist_endpoint(href: str) -> bool:
 
         if not isinstance(href, str):
-            raise TypeError('href must be of type str')
+            raise TypeError("href must be of type str")
 
-        pattern = '/psasetregistry/baseball/.*/\d+'
+        pattern = "/psasetregistry/baseball/.*/\d+"
         p = re.compile(pattern)
 
         return p.match(href)
-
 
     def _load_content(self):
         url = self._endpoint()
@@ -56,10 +52,8 @@ class PsaResource:
         self.html = page.html
         # self.html = BeautifulSoup(page.html, 'html.parser')
 
-
     def _endpoint(self) -> str:
         return self.base_url + self.href
 
     def __str__(self) -> str:
         return self._endpoint()
-

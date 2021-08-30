@@ -1,0 +1,4 @@
+env/
+data/*.csv
+__pycache__
+*.swp

@@ -1,12 +1,12 @@
 from typing import Any
 
-class FileReader:
 
+class FileReader:
     def __init__(self):
         self.is_open = False
 
     def open(self, file_name: str):
-        self.f = open(file_name, 'r')
+        self.f = open(file_name, "r")
         self.is_open = True
 
     def close(self):
@@ -15,7 +15,7 @@ class FileReader:
 
     def read_lines(self) -> str:
         if not self.is_open:
-            raise RuntimeError('the file has not been opened for reading')
+            raise RuntimeError("the file has not been opened for reading")
 
         while True:
             line = self.f.readline()
@@ -24,4 +24,3 @@ class FileReader:
                 yield line
             else:
                 break
-
