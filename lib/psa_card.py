@@ -1,5 +1,6 @@
 import sys
 import numpy as np
+import numpy.typing as npt
 from typing import List
 
 
@@ -9,7 +10,7 @@ class PsaCard:
         *,
         url: str,
         shape,
-        img: np.array,
+        img: npt.NDArray,
         spec_id,
         card_numb,
         item: str,

@@ -30,7 +30,7 @@ class PsaResource:
         pattern = "/psasetregistry/baseball/.*/alltimeset/\d+"
         p = re.compile(pattern)
 
-        return p.match(href)
+        return True if p.match(href) else False
 
     @staticmethod
     def is_setlist_endpoint(href: str) -> bool:
@@ -41,16 +41,18 @@ class PsaResource:
         pattern = "/psasetregistry/baseball/.*/\d+"
         p = re.compile(pattern)
 
-        return p.match(href)
+        return True if p.match(href) else False
 
-    def _load_content(self):
-        url = self._endpoint()
-        session = HTMLSession()
+    def _load_content(self) -> BeautifulSoup:
+        if not self.html:
+            url = self._endpoint()
+            session = HTMLSession()
 
-        page = session.get(url)
-        page.html.render()
-        self.html = page.html
-        # self.html = BeautifulSoup(page.html, 'html.parser')
+            page = session.get(url)
+            page.html.render()
+            self.html = page.html
+            return self.html
+            # self.html = BeautifulSoup(page.html, 'html.parser')
 
     def _endpoint(self) -> str:
         return self.base_url + self.href

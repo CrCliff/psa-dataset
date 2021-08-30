@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Generator
 
 
 class FileReader:
@@ -13,7 +13,7 @@ class FileReader:
         self.f.close()
         self.is_open = False
 
-    def read_lines(self) -> str:
+    def read_lines(self) -> Generator[str, None, None]:
         if not self.is_open:
             raise RuntimeError("the file has not been opened for reading")
 

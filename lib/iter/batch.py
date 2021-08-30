@@ -4,7 +4,7 @@ from typing import Generator, Iterable, TypeVar
 T = TypeVar("T")
 
 
-def batch(iterable: Iterable[T], n: int) -> Generator[Iterable[T]]:
+def batch(iterable: Iterable[T], n: int) -> Generator[Iterable[T], None, None]:
 
     if not isinstance(n, int):
         raise TypeError("n must be of type int")

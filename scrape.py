@@ -1,20 +1,15 @@
-import itertools
-import re
 import time
+from typing import Generator, Iterable
 
 import requests
 from bs4 import BeautifulSoup
 
 from lib import PsaResource, PsaSet
-from lib.io import FileReader, FileWriter
+from lib.io import FileWriter
 from lib.iter import batch
+from lib.psa_card import PsaCard
 
-
-def is_baseball_endpoint(href):
-    PATTERN = "/psasetregistry/baseball/.*/\d+"
-    p = re.compile(PATTERN)
-
-    return p.match(href)
+CardGenerator = Generator[PsaCard, None, None]
 
 
 def endpoint(href):
@@ -23,22 +18,20 @@ def endpoint(href):
     return BASE_URL + href
 
 
-def parse_set(href):
-    psa_set = PsaSet(href, has_gallery=True)
+def parse_set(href) -> CardGenerator:
+    psa_set = PsaSet(href)
     print(psa_set)
 
     try:
-        psa_set.get_cards()
         time.sleep(0.75)
-        yield from psa_set.cards
-    except:
+        yield from psa_set.get_cards()
+    except Exception as err:
         print(f"ERROR: Failed to get cards for set {psa_set}")
         print(err)
 
 
-def parse_set_group(href):
+def parse_set_group(href) -> CardGenerator:
     url = endpoint(href)
-
     page = requests.get(url)
     soup = BeautifulSoup(page.content, "html.parser")
 
@@ -61,36 +54,30 @@ def parse_set_group(href):
         yield from parse_set(href)
 
 
-def parse_category(href):
+def parse_category(href) -> CardGenerator:
     url = endpoint(href)
-
     page = requests.get(url)
     soup = BeautifulSoup(page.content, "html.parser")
 
     for link in soup.find_all("a"):
         href = link.get("href")
-        if is_baseball_endpoint(href):
-            #            print(href)
+        if PsaResource.is_setlist_endpoint(href):
             yield from parse_set_group(href)
 
 
-def get_cards():
+def get_cards() -> CardGenerator:
     url = endpoint("/psasetregistry/baseball/1")
 
     page = requests.get(url)
     soup = BeautifulSoup(page.content, "html.parser")
 
-    pattern = "/psasetregistry/baseball/.*/\d+"
-    p = re.compile(pattern)
-
     for link in soup.find_all("a"):
         href = link.get("href")
-        if is_baseball_endpoint(href):
+        if PsaResource.is_setlist_endpoint(href):
             yield from parse_category(href)
 
 
-def get_cards_batched(n=100):
-    cards = get_cards()
+def get_cards_batched(n=100) -> Generator[Iterable[PsaCard], None, None]:
     yield from batch(get_cards(), n)
 
 
