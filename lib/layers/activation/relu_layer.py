@@ -3,20 +3,25 @@ from .activation_layer import ActivationLayer
 
 class ReluLayer(ActivationLayer):
     '''
-    A simple implementation of a RelU activation layer that works on both vertices and matrices.
-    The RelU function is max(0, x).
+    A simple implementation of a leaky ReLU activation layer that works on both vertices and matrices.
+    The ReLU function is max(0.1*x, x).
     '''
+    
+    def __init__(self, leaky=False):
+        self.leaky = leaky
     
     def forward_propagate(self, X, otypes=[np.float]):
         self.X = X
         return np.vectorize(self.g, otypes)(X)
     
     def g(self, x):
-        return max(0, x)
+        max_term = 0.1*x if self.leaky else 0
+        return max(max_term, x)
     
     def gradient(self, otypes=[np.float]):
         def grad_z(z):
-            return 1 if z >= 0 else 0
+            min_grad = 0.1 if self.leaky else 0
+            return 1 if z >= 0 else min_grad
         
         return np.vectorize(grad_z, otypes)(self.X)
 
