@@ -2,3 +2,4 @@ env/
 data/*.csv
 __pycache__
 *.swp
+.ipynb_checkpoints
