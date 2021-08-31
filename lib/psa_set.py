@@ -3,14 +3,15 @@ import io
 import cv2
 import numpy as np
 import numpy.typing as npt
+from requests_html import HTMLSession
 from .psa_resource import PsaResource
 from .psa_card import PsaCard
 from typing import Generator, Iterator, List, Tuple
 from PIL import Image
 
 class PsaSet(PsaResource):
-    def __init__(self, href: str):
-        super().__init__(href)
+    def __init__(self, session: HTMLSession, href: str):
+        super().__init__(session, href)
 
     def get_cards(self) -> List[PsaCard]:
 

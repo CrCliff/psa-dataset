@@ -3,6 +3,7 @@ from typing import Generator, Iterable
 
 import requests
 from bs4 import BeautifulSoup
+from requests_html import HTMLSession
 
 from lib import PsaResource, PsaSet
 from lib.io import FileWriter
@@ -10,6 +11,8 @@ from lib.iter import batch
 from lib.psa_card import PsaCard
 
 CardGenerator = Generator[PsaCard, None, None]
+
+session = HTMLSession()
 
 
 def endpoint(href):
@@ -19,7 +22,7 @@ def endpoint(href):
 
 
 def parse_set(href) -> CardGenerator:
-    psa_set = PsaSet(href)
+    psa_set = PsaSet(session, href)
     print(psa_set)
 
     try:
@@ -96,6 +99,8 @@ def main():
         file_writer.close()
 
         i += 1
+
+    session.close()
 
 
 if __name__ == "__main__":

@@ -9,7 +9,7 @@ class PsaResource:
 
     BASE_URL = "https://www.psacard.com"
 
-    def __init__(self, href: str, base_url: Optional[str] = BASE_URL):
+    def __init__(self, session: HTMLSession, href: str, base_url: Optional[str] = BASE_URL):
 
         if not isinstance(href, str):
             raise TypeError("href must be of type str")
@@ -17,6 +17,7 @@ class PsaResource:
         if not isinstance(base_url, str):
             raise TypeError("base_url must be of type str")
 
+        self.session = session
         self.href = href
         self.base_url = base_url
         self.html: Optional[BeautifulSoup] = None
@@ -46,9 +47,7 @@ class PsaResource:
     def _load_content(self) -> BeautifulSoup:
         if not self.html:
             url = self._endpoint()
-            session = HTMLSession()
-
-            page = session.get(url)
+            page = self.session.get(url)
             page.html.render()
             self.html = page.html
             return self.html
