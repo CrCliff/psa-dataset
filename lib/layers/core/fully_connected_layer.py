@@ -18,6 +18,8 @@ class FullyConnectedLayer():
     
     def forward_propagate(self, X):
         self.X = X
+        if len(self.X.shape) < 2:
+            self.X = np.reshape(self.X, (1,-1))
         return X @ self.weights + self.biases
     
     def gradient(self):

@@ -1,5 +1,6 @@
 import numpy as np
 from overrides import EnforceOverrides
+from lib.layers.conv import ConvolutionalLayer, FlattenLayer, UnflattenLayer, PoolingLayer
 
 class Model(EnforceOverrides):
     '''
@@ -40,7 +41,6 @@ class Model(EnforceOverrides):
         i = 0
         for layer in self.layers:
             result = layer.forward_propagate(result)
-            # print(layer, result)
             i += 1
             if self.verbose:
                 print(f'Output of layer {i}:\n', result[:5])
@@ -55,10 +55,18 @@ class Model(EnforceOverrides):
             if layer.is_elementwise():
                 grad = grad * layer.gradient()
             else:
-                if (hasattr(layer, 'weights')):
+                if (hasattr(layer, 'weights')
+                       or isinstance(layer, ConvolutionalLayer)):
                     # Update weights using prev gradient
                     layer.update(grad)
-                grad = grad @ layer.gradient()
+                    
+                if (isinstance(layer, ConvolutionalLayer)
+                        or isinstance(layer, FlattenLayer)
+                        or isinstance(layer, PoolingLayer)
+                        or isinstance(layer, UnflattenLayer)):
+                    grad = layer.gradient(grad)
+                else:    
+                    grad = grad @ layer.gradient()
         
         return grad
     
