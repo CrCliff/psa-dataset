@@ -1,7 +1,7 @@
 env/
 *.csv
 *.swp
-.ipynb_checkpoints
+**/.ipynb_checkpoints
 # Byte-compiled / optimized / DLL files
 *.py[cod]
 **/__pycache__
