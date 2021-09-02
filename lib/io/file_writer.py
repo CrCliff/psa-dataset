@@ -16,14 +16,15 @@ class FileWriter:
         self.is_open = True
 
     def close(self) -> None:
-        self.f.close()
+        if self.f:
+            self.f.close()
         
-        # Replace file with swap file and remove swap file
-        os.replace(self.swap_file, self.file_name)
+        if self.swap_file and self.file_name:
+            # Replace file with swap file and remove swap file
+            os.replace(self.swap_file, self.file_name)
         
         self.swap_file = None
         self.file_name = None
-        self.f = None
         self.is_open = False
 
     def write(self, obj: Any) -> None:

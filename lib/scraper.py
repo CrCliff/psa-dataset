@@ -12,7 +12,28 @@ from lib.psa_card import PsaCard
 
 CardGenerator = Generator[PsaCard, None, None]
 
-session = HTMLSession()
+
+class Scraper:
+    
+    def __init__(self, session: HTMLSession, file_writer: FileWriter):
+        self.session = session
+        self.file_writer = file_writer
+        
+    def scrape(self):
+        fw = self.file_writer
+        cards = get_cards_batched(self.session) 
+
+        i = 0
+        for batch in cards:
+            file_name = f"data/{i:04}.csv"
+
+            fw.open(file_name)
+            for card in batch:
+                fw.write(card)
+                fw.write("\n")
+            fw.close()
+
+            i += 1
 
 
 def endpoint(href):
@@ -21,7 +42,7 @@ def endpoint(href):
     return BASE_URL + href
 
 
-def parse_set(href) -> CardGenerator:
+def parse_set(session, href) -> CardGenerator:
     psa_set = PsaSet(session, href)
     print(psa_set)
 
@@ -33,7 +54,7 @@ def parse_set(href) -> CardGenerator:
         print(err)
 
 
-def parse_set_group(href) -> CardGenerator:
+def parse_set_group(session, href) -> CardGenerator:
     url = endpoint(href)
     page = requests.get(url)
     soup = BeautifulSoup(page.content, "html.parser")
@@ -54,10 +75,10 @@ def parse_set_group(href) -> CardGenerator:
             set_links.append(links[0])
 
     for href in set_links:
-        yield from parse_set(href)
+        yield from parse_set(session, href)
 
 
-def parse_category(href) -> CardGenerator:
+def parse_category(session, href) -> CardGenerator:
     url = endpoint(href)
     page = requests.get(url)
     soup = BeautifulSoup(page.content, "html.parser")
@@ -65,10 +86,10 @@ def parse_category(href) -> CardGenerator:
     for link in soup.find_all("a"):
         href = link.get("href")
         if PsaResource.is_setlist_endpoint(href):
-            yield from parse_set_group(href)
+            yield from parse_set_group(session, href)
 
 
-def get_cards() -> CardGenerator:
+def get_cards(session) -> CardGenerator:
     url = endpoint("/psasetregistry/baseball/1")
 
     page = requests.get(url)
@@ -77,31 +98,9 @@ def get_cards() -> CardGenerator:
     for link in soup.find_all("a"):
         href = link.get("href")
         if PsaResource.is_setlist_endpoint(href):
-            yield from parse_category(href)
+            yield from parse_category(session, href)
 
 
-def get_cards_batched(n=100) -> Generator[Iterable[PsaCard], None, None]:
-    yield from batch(get_cards(), n)
+def get_cards_batched(session, n=100) -> Generator[Iterable[PsaCard], None, None]:
+    yield from batch(get_cards(session), n)
 
-
-def main():
-    file_writer = FileWriter()
-    cards = get_cards_batched()
-
-    i = 0
-    for batch in cards:
-        file_name = f"data/{i:04}.csv"
-
-        file_writer.open(file_name)
-        for card in batch:
-            file_writer.write(card)
-            file_writer.write("\n")
-        file_writer.close()
-
-        i += 1
-
-    session.close()
-
-
-if __name__ == "__main__":
-    main()

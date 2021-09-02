@@ -10,7 +10,8 @@ class FileReader:
         self.is_open = True
 
     def close(self):
-        self.f.close()
+        if self.f:
+            self.f.close()
         self.is_open = False
 
     def read_lines(self) -> Generator[str, None, None]:
