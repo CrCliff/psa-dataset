@@ -1,8 +1,8 @@
 # Out of the Park: Trading Card Grading Dataset and Models
 
-Chris Clifford
+Chris Clifford - 09/01/2021
+
 Drexel CS 615
-08/01/2021
 
 All code is published to https://github.com/CrCliff/psa-dataset.
 
