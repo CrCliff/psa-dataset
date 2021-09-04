@@ -1,13 +1,16 @@
-#FROM opencvcourses/opencv-docker:4.5.1
 FROM python:3.9.7-slim
+
+ENV S3_IN ""
+ENV S3_OUT ""
 
 RUN apt-get update
 RUN apt-get install ffmpeg libsm6 libxext6  -y
 
-COPY lib/ lib/
-COPY main.py .
 COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
-CMD [ "python", "main.py", "help" ]
+COPY lib/ lib/
+COPY main.py .
+
+CMD python3 main.py pr --fin="${S3_IN}" --fout="${S3_OUT}"
