@@ -1,4 +1,4 @@
-FROM http://027517924056.dkr.ecr.us-east-1.amazonaws.com/python:3.9.7-slim
+FROM 027517924056.dkr.ecr.us-east-1.amazonaws.com/python:3.9.7-slim
 
 ENV S3_IN ""
 ENV S3_OUT ""
