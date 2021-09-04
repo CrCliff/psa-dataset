@@ -86,16 +86,25 @@ class Preprocessor:
 
     @staticmethod
     def write_card(fw: FileWriter, card: PsaCard):
-        if card.img.shape[0] > card.img.shape[1]:
-            Preprocessor.grayscale(card)
-            Preprocessor.resize(card)
-            features = Preprocessor.featurize(card)
+        Preprocessor.grayscale(card)
 
-            sample = [Preprocessor.fgrade(card.grade), *features]
-            sample_str = ",".join(map(str, sample))
+        if card.img.shape[0] < card.img.shape[1]:
+            card = Preprocessor.rotate(card)
 
-            fw.write(sample_str)
-            fw.write("\n")
+        Preprocessor.resize(card)
+        features = Preprocessor.featurize(card)
+
+        sample = [Preprocessor.fgrade(card.grade), *features]
+        sample_str = ",".join(map(str, sample))
+
+        fw.write(sample_str)
+        fw.write("\n")
+    
+    @staticmethod
+    def rotate(card):
+        img = cv2.rotate(card.img, cv2.ROTATE_90_COUNTERCLOCKWISE)
+        card.img = np.array(img)
+        return card
 
     @staticmethod
     def resize(card):
