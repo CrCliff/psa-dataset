@@ -10,6 +10,7 @@ COPY requirements.txt .
 
 RUN pip install -r requirements.txt
 
+COPY ecs/ ecs/
 COPY lib/ lib/
 COPY main.py .
 
