@@ -49,7 +49,6 @@ class Preprocessor:
                 try:
                     card = PsaCard.from_csv(line)
                     Preprocessor.write_card(fw, card)
-                    break
                 except ValueError as err:
                     # In case of an issue converting the line to a card, just skip the line
                     # This can happen if the name of the card contains a comma
