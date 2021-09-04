@@ -50,6 +50,16 @@ def get_params(s3_in: str, s3_out: str) -> dict:
                 }
             ]
         },
+        "tags": [
+            {
+                "key": "S3_IN",
+                "value": s3_in,
+            },
+            {
+                "key": "S3_OUT",
+                "value": s3_out,
+            },
+        ],
         "propagateTags": "TASK_DEFINITION",
         "taskDefinition": ECS_TASK_DEFINITION,
     }
@@ -67,7 +77,7 @@ if __name__ == "__main__":
         
         print(i, resp)
 
-        if i != 0 and i % 20 == 0:
+        if i != 0 and i % 49 == 0:
             # We can only run 50 tasks concurrently, wait for these to finish
             print(f'Waiting on task {i}...')
-            time.sleep(45)
+            time.sleep(240)
