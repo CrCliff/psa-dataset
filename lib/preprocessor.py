@@ -54,8 +54,10 @@ class Preprocessor:
                     # In case of an issue converting the line to a card, just skip the line
                     # This can happen if the name of the card contains a comma
                     # Pobody's nerfect
-                    # print(err)
+                    print(err)
                     pass
+        except Exception as err:
+            print(err)
         finally:
             fr.close()
             fw.close()
